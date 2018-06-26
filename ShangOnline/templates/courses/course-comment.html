@@ -1,0 +1,64 @@
+{% extends 'courses/course-video.html' %}
+{% load staticfiles %}
+{% block mycss1 %}
+    <link rel="stylesheet" type="text/css" href="/static/css/muke/course/course-comment.css"/>
+{% endblock %}
+
+{% block breach %}
+    课程评论
+{% endblock %}
+{% block comment %}
+    <div id="js-pub-container" class="issques clearfix js-form">
+        <div class="wgt-ipt-wrap pub-editor-wrap " id="js-pl-input-fake">
+            <textarea id="js-pl-textarea" class="" placeholder="扯淡、吐槽、表扬、鼓励……想说啥就说啥！"></textarea>
+        </div>
+        <input type="button" id="js-pl-submit" class="pub-btn" data-cid="452" value="发表评论">
+        <p class="global-errortip js-global-error"></p>
+    </div>
+    <div id="course_note">
+        <ul class="mod-post" id="comment-list">
+            {% for comment in course.usercommentinfo_set.all %}
+                <li class="post-row">
+                    <div class="media">
+                        <span target="_blank"><img src='{{ MEDIA_URL }}{{ comment.userid.image }}' width='40'
+                                                   height='40'/></span>
+                    </div>
+                    <div class="bd">
+                        <div class="tit">
+                            <span target="_blank">{{ comment.userid.nike_name }}</span>
+                        </div>
+                        <p class="cnt">{{ comment.comment_content }}</p>
+                        <div class="footer clearfix">
+                            <span title="创建时间" class="l timeago">时间：{{ comment.add_time }}</span>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block myjs %}
+    <script>
+        $(function () {
+            $('#js-pl-submit').click(function () {
+                var content=$('#js-pl-textarea').val();
+                var courseid={{ course.id }};
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'operations:user_comment' %}',
+                    data:{content:content,courseid:courseid,csrfmiddlewaretoken:'{{ csrf_token }}'},
+                    success:function (callback) {
+                        if (callback.status=='ok'){
+                            alert('成功')
+                            window.location.reload()
+                        }
+                        else {
+                            alert(callback.msg)
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+{% endblock %}

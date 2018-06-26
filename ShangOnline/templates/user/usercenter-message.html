@@ -1,0 +1,71 @@
+{% extends 'user/usercenter-info.html' %}
+{% block title %}
+    我的消息
+{% endblock %}
+{% block breach %}
+    我的消息
+{% endblock %}
+{% block right %}
+    <div class="right">
+        <div class="personal_des Releasecont">
+            <div class="head">
+                <h1>我的消息</h1>
+            </div>
+
+        </div>
+        <div class="personal_des permessage">
+            <div class="head">
+                <ul class="tab_header messagehead">
+                    <li class="active"><a href="/user/message/">个人消息</a></li>
+                </ul>
+
+
+            </div>
+
+            <div class="messagelist">
+                {% for mymsg in user_msg %}
+                    <div class="messages">
+                        <div class="fr">
+                            <div class="top"><span class="fl time">{{ mymsg.add_time }}</span><span
+                                    class="fr btn foldbtn"></span><span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+                                {#                                <button id="read-ed" mymsg-id="{{ mymsg.id }}"> 标记已读</button>#}
+                            </div>
+
+                            <p>
+                                {{ mymsg.message }}
+                            </p>
+
+                        </div>
+                        <div class="delete jsDeleteFav_org" mymsg-id="{{ mymsg.id }}"></div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
+{% block myjs1 %}
+
+    <script>
+    $(function () {
+        $('.delete').click(function () {
+            var msg_id = $(this).attr('mymsg-id');
+            var obj = $(this);
+            $.ajax({
+                type: 'GET',
+                url: '{% url 'operations:user_read' %}',
+                data: {msg_id: msg_id},
+                success: function (callback) {
+                    if (callback.status == 'ok') {
+                        obj.parents('.messages').remove()
+                    }
+                }
+            })
+        })
+    })
+
+    </script>
+{% endblock %}
+
+
